@@ -1,0 +1,22 @@
+{
+  "name": "Miscoria Login Node",
+  "version": "0.0.1",
+  "description": "The RESTFULL API for the Miscoria Login Node",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \\\"Error: no test specified\\\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Praevalens/VirgoNode.git"
+  },
+  "keywords": [
+    "npm"
+  ],
+  "author": "Milan van Dijck",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Praevalens/VirgoNode/issues"
+  },
+  "homepage": "https://github.com/Praevalens/VirgoNode#readme"
+}
