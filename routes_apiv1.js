@@ -17,13 +17,6 @@ router.post('/countkw', function (req, res) {
             "message": "Incompatible data"
         });
     } else {
-        console.log("KwCount: " + count);
-        res.status(200);
-        res.json({
-            "status": 200,
-            "message": "Count submitted"
-        });
-    } /*else {
         dbConnection = sql.createConnection({
             host     : settings.dbHost,
             user     : settings.dbUser,
@@ -40,7 +33,7 @@ router.post('/countkw', function (req, res) {
         });
 
         try {
-            dbConnection.query('SELECT * FROM SVVirgo.offers WHERE updated > \''+update_date+'\'', function (err, rows, fields) {
+            dbConnection.query('INSERT INTO \'PowerUsage\' (kwatts) VALUES ('+ count +')', function (err, rows, fields) {
 
                 res.status(200);
                 res.json(response);
@@ -51,12 +44,12 @@ router.post('/countkw', function (req, res) {
             res.status(500);
             res.json({
                 "status": 500,
-                "message": "Server error."
+                "message": "Server error"
             });
             throw err;
         }
         dbConnection.end();
-    }*/
+    }
 
 });
 
