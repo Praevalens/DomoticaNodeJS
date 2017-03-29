@@ -33,12 +33,14 @@ router.post('/countkw', function (req, res) {
         });
 
         try {
-            dbConnection.query('INSERT INTO \'PowerUsage\' (kwatts) VALUES ('+ count +')', function (err, rows, fields) {
+            dbConnection.query('INSERT INTO domotica.PowerUsage(kwatts) VALUES ("'+ count +'")', function (err, result){});
 
-                res.status(200);
-                res.json(response);
-
+            res.status(200);
+            res.json({
+                "status": 200,
+                "message": "Success!"
             });
+
         } catch (err){
             console.log("Server error");
             res.status(500);
