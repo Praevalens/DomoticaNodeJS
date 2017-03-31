@@ -167,14 +167,15 @@ router.get('/', function (req, res) {
 
 function checkPowerUsage(){
 
-    dbConnection = sql.createConnection({
+
+    var dbConnection3 = sql.createConnection({
         host     : settings.dbHost,
         user     : settings.dbUser,
         password : settings.dbPassword,
         dateStrings: 'date'
     });
 
-    dbConnection.connect(function(err){
+    dbConnection3.connect(function(err){
         if(!err) {
             console.log("Database is connected ...");
         } else {
@@ -183,30 +184,29 @@ function checkPowerUsage(){
     });
 
     try {
-        dbConnection.query('SELECT * FROM domotica.PowerUsage ORDER BY id DESC LIMIT 1', function (err, rows, fields){
+        dbConnection3.query('SELECT * FROM domotica.PowerUsage ORDER BY id DESC LIMIT 1', function (err, rows, fields){
             if (err) throw err;
             var kWh = parseInt(rows[0].kwatts.toString()) * 2; // Two times the amount of kilowatts in half an hour is kWh
             var date = rows[0].date.toString();
 
             var dataDate = new Date(date);
 
+            var dbConnection2 = sql.createConnection({
+                host     : settings.dbHost,
+                user     : settings.dbUser,
+                password : settings.dbPassword,
+                dateStrings: 'date'
+            });
+
+            dbConnection2.connect(function(err){
+                if(!err) {
+                    console.log("Database is connected ...");
+                } else {
+                    console.log("Error connecting database ...");
+                }
+            });
+
             try {
-
-                var dbConnection2 = sql.createConnection({
-                    host     : settings.dbHost,
-                    user     : settings.dbUser,
-                    password : settings.dbPassword,
-                    dateStrings: 'date'
-                });
-
-                dbConnection2.connect(function(err){
-                    if(!err) {
-                        console.log("Database is connected ...");
-                    } else {
-                        console.log("Error connecting database ...");
-                    }
-                });
-
                 dbConnection2.query('SELECT * FROM domotica.PowerCalibration', function (err, rows, fields){
                     if (err) throw err;
                     var calibrationDates = [];
@@ -235,7 +235,7 @@ function checkPowerUsage(){
                         }
                     }
                 });
-                dbConnection2.end();
+
 
             } catch (err){
                 console.log("Server error");
@@ -246,6 +246,8 @@ function checkPowerUsage(){
                 });
                 throw err;
             }
+
+            dbConnection2.end();
         });
 
     } catch (err){
@@ -258,7 +260,7 @@ function checkPowerUsage(){
         throw err;
     }
 
-    dbConnection.end();
+    dbConnection3.end();
 }
 
 function sendUserWarning(){
