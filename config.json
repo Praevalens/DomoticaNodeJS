@@ -1,6 +1,6 @@
 {
 	"secretkey" 	: "FmonCSGripEnergyMonitor-123454321AbCd-",
-	"dbHost"		: "192.168.0.107",
+	"dbHost"		: "127.0.0.1",
 	"dbUser"		: "root",
 	"dbPassword"	: "Access@mysqldb2016",
 	"webPort"		: "8060",
