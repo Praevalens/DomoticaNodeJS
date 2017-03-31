@@ -195,7 +195,7 @@ function checkPowerUsage(kWh, date){
                 datapointDate.setHours(parseInt(time[0]), parseInt(time[1]), parseInt(time[2]));
 
                 var datapoint = {
-                    kWh: parseInt(row.kwatts.toString()),
+                    kWh: parseInt(row.kWh.toString()),
                     time: datapointDate
                 };
                 calibrationDates.push(datapoint);
