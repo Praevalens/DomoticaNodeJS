@@ -191,14 +191,23 @@ function checkPowerUsage(){
             var dataDate = new Date(date);
 
             try {
-                dbConnection = sql.createConnection({
+
+                var dbConnection2 = sql.createConnection({
                     host     : settings.dbHost,
                     user     : settings.dbUser,
                     password : settings.dbPassword,
                     dateStrings: 'date'
                 });
 
-                dbConnection.query('SELECT * FROM domotica.PowerCalibration', function (err, rows, fields){
+                dbConnection2.connect(function(err){
+                    if(!err) {
+                        console.log("Database is connected ...");
+                    } else {
+                        console.log("Error connecting database ...");
+                    }
+                });
+
+                dbConnection2.query('SELECT * FROM domotica.PowerCalibration', function (err, rows, fields){
                     if (err) throw err;
                     var calibrationDates = [];
 
@@ -226,6 +235,7 @@ function checkPowerUsage(){
                         }
                     }
                 });
+                dbConnection2.end();
 
             } catch (err){
                 console.log("Server error");
