@@ -42,7 +42,7 @@ router.post('/countkw', function (req, res) {
                 "message": "Success!"
             });
 
-            sendUserWarning();
+            checkPowerUsage();
 
         } catch (err){
             console.log("Server error");
@@ -165,8 +165,7 @@ router.get('/', function (req, res) {
     });
 });
 
-function checkPowerUsage(kWh, date){
-    var dataDate = new Date(date);
+function checkPowerUsage(){
 
     dbConnection = sql.createConnection({
         host     : settings.dbHost,
@@ -184,32 +183,51 @@ function checkPowerUsage(kWh, date){
     });
 
     try {
-        dbConnection.query('SELECT * FROM domotica.PowerCalibration', function (err, rows, fields){
+        dbConnection.query('SELECT * FROM domotica.PowerUsage ORDER BY id DESC LIMIT 1', function (err, rows, fields){
             if (err) throw err;
-            var calibrationDates = [];
+            var kWh = parseInt(rows[0].kwatts.toString()) * 2; // Two times the amount of kilowatts in half an hour is kWh
+            var date = rows[0].date.toString();
 
-            rows.forEach(function (row) {
+            var dataDate = new Date(date);
 
-                var datapointDate = new Date();
-                var time = row.time.toString().split(':');
-                datapointDate.setHours(parseInt(time[0]), parseInt(time[1]), parseInt(time[2]));
+            try {
+                dbConnection.query('SELECT * FROM domotica.PowerCalibration', function (err, rows, fields){
+                    if (err) throw err;
+                    var calibrationDates = [];
 
-                var datapoint = {
-                    kWh: parseInt(row.kWh.toString()),
-                    time: datapointDate
-                };
-                calibrationDates.push(datapoint);
-            });
+                    rows.forEach(function (row) {
 
-            for (var i = 0; i < calibrationDates.length; i++){
-                // if it falls between certain times
-                if (dataDate > calibrationDates[i].time && dataDate < calibrationDates[i+1].time){
+                        var datapointDate = new Date();
+                        var time = row.time.toString().split(':');
+                        datapointDate.setHours(parseInt(time[0]), parseInt(time[1]), parseInt(time[2]));
 
-                    // Check if there is more energy usage than the calibrated amount
-                    if (calibrationDates[i].kWh < kWh){
-                        sendUserWarning();
+                        var datapoint = {
+                            kWh: parseInt(row.kWh.toString()),
+                            time: datapointDate
+                        };
+                        calibrationDates.push(datapoint);
+                    });
+
+                    for (var i = 0; i < calibrationDates.length; i++){
+                        // if it falls between certain times
+                        if (dataDate > calibrationDates[i].time && dataDate < calibrationDates[i+1].time){
+                            console.log("Dates: " + calibrationDates[i].toString() + " - " + calibrationDates[i+1].toString() );
+                            // Check if there is more energy usage than the calibrated amount
+                            if (calibrationDates[i].kWh < kWh){
+                                sendUserWarning();
+                            }
+                        }
                     }
-                }
+                });
+
+            } catch (err){
+                console.log("Server error");
+                res.status(500);
+                res.json({
+                    "status": 500,
+                    "message": "Server error"
+                });
+                throw err;
             }
         });
 
@@ -222,6 +240,7 @@ function checkPowerUsage(kWh, date){
         });
         throw err;
     }
+
     dbConnection.end();
 }
 
@@ -244,7 +263,7 @@ function sendUserWarning(){
     req.write(body);
     req.end();
 
-    console.log("Sent warning to user warning.")
+    console.log("Sent warning to user.")
 }
 
 module.exports = router;
