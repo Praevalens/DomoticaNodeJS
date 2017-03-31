@@ -143,7 +143,7 @@ function checkPowerUsage(kWh, date){
             for (var i = 0; i < calibrationDates.length; i++){
                 // if it falls between certain times
                 if (dataDate > calibrationDates[i].time && dataDate < calibrationDates[i+1].time){
-
+				console.log("Dates: " + calibrationDates[i] + " - " + calibrationDates[i+1] );
                     // Check if there is more energy usage than the calibrated amount
                     if (calibrationDates[i].kWh < kWh){
                         sendUserWarning();
@@ -183,7 +183,9 @@ function sendUserWarning(){
     req.write(body);
     req.end();
 
-    console.log("Sent warning to user warning.")
+    console.log("Sent warning to user.")
 }
 
-checkPowerUsage(5000, "2017-03-31 14:40:00");
+checkPowerUsage(100, "2017-03-31 14:40:00");
+checkPowerUsage(200, "2017-03-31 14:40:00");
+checkPowerUsage(1100, "2017-03-31 16:40:00");
