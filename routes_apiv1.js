@@ -27,7 +27,7 @@ router.post('/countkw', function (req, res) {
 
         dbConnection.connect(function(err){
             if(!err) {
-                console.log("Database is connected ...");
+                //console.log("Database is connected ...");
             } else {
                 console.log("Error connecting database ...");
             }
@@ -69,7 +69,7 @@ router.get('/powerusage', function (req, res) {
 
     dbConnection.connect(function(err){
         if(!err) {
-            console.log("Database is connected ...");
+            //console.log("Database is connected ...");
         } else {
             console.log("Error connecting database ...");
         }
@@ -110,7 +110,7 @@ router.get('/powerusage/today', function (req, res) {
 
     dbConnection.connect(function(err){
         if(!err) {
-            console.log("Database is connected ...");
+            //console.log("Database is connected ...");
         } else {
             console.log("Error connecting database ...");
         }
@@ -177,7 +177,7 @@ function checkPowerUsage(){
 
     dbConnection3.connect(function(err){
         if(!err) {
-            console.log("Database is connected ...");
+            //console.log("Database is connected ...");
         } else {
             console.log("Error connecting database ...");
         }
@@ -200,7 +200,7 @@ function checkPowerUsage(){
 
             dbConnection2.connect(function(err){
                 if(!err) {
-                    console.log("Database is connected ...");
+                    //console.log("Database is connected ...");
                 } else {
                     console.log("Error connecting database ...");
                 }
@@ -227,7 +227,7 @@ function checkPowerUsage(){
                     for (var i = 0; i < calibrationDates.length; i++){
                         // if it falls between certain times
                         if (dataDate > calibrationDates[i].time && dataDate < calibrationDates[i+1].time){
-                            console.log("Dates: " + calibrationDates[i].toString() + " - " + calibrationDates[i+1].toString() );
+                            //console.log("Dates: " + calibrationDates[i].toString() + " - " + calibrationDates[i+1].toString() );
                             // Check if there is more energy usage than the calibrated amount
                             if (calibrationDates[i].kWh < kWh){
                                 sendUserWarning();
