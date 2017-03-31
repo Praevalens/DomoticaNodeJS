@@ -191,6 +191,13 @@ function checkPowerUsage(){
             var dataDate = new Date(date);
 
             try {
+                dbConnection = sql.createConnection({
+                    host     : settings.dbHost,
+                    user     : settings.dbUser,
+                    password : settings.dbPassword,
+                    dateStrings: 'date'
+                });
+
                 dbConnection.query('SELECT * FROM domotica.PowerCalibration', function (err, rows, fields){
                     if (err) throw err;
                     var calibrationDates = [];
