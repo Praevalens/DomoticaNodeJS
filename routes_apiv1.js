@@ -110,6 +110,48 @@ router.post('/sensorreadings/push', function (req, res) {
 
 });
 
+router.get('/sensorreadings', function (req, res) {
+
+    dbConnection = sql.createConnection({
+        host     : settings.dbHost,
+        user     : settings.dbUser,
+        password : settings.dbPassword,
+        dateStrings: 'date'
+    });
+
+    dbConnection.connect(function(err){
+        if(!err) {
+            //console.log("Database is connected ...");
+        } else {
+            console.log("Error connecting database ...");
+        }
+    });
+
+    try {
+        dbConnection.query('SELECT * FROM domotica.sensorreadings ORDER BY id DESC LIMIT 1', function (err, rows, fields){
+            if (err) throw err;
+            var lightintensity = parseInt(rows[0].sensor2.toString()); // Two times the amount of kilowatts in half an hour is kWh
+            var temperature = parseInt(rows[0].sensor3.toString());
+
+            res.status(200);
+            res.json({
+                "status": 200,
+                "kWh": kWhCount
+            });
+        });
+
+    } catch (err){
+        console.log("Server error");
+        res.status(500);
+        res.json({
+            "status": 500,
+            "message": "Server error"
+        });
+        throw err;
+    }
+    dbConnection.end();
+});
+
 router.get('/powerusage', function (req, res) {
 
     dbConnection = sql.createConnection({
@@ -178,6 +220,53 @@ router.get('/powerusage/today', function (req, res) {
                     kWh: parseInt(row.kwatts.toString())*2,
                     date: row.date.toString()
                 };
+                response.push(datapoint);
+            });
+
+            res.status(200);
+            res.json({
+                "status": 200,
+                "data": response
+            });
+        });
+
+    } catch (err){
+        console.log("Server error");
+        res.status(500);
+        res.json({
+            "status": 500,
+            "message": "Server error"
+        });
+        throw err;
+    }
+    dbConnection.end();
+});
+
+router.get('/powerusage/today/web', function (req, res) {
+
+    dbConnection = sql.createConnection({
+        host     : settings.dbHost,
+        user     : settings.dbUser,
+        password : settings.dbPassword,
+        dateStrings: 'date'
+    });
+
+    dbConnection.connect(function(err){
+        if(!err) {
+            //console.log("Database is connected ...");
+        } else {
+            console.log("Error connecting database ...");
+        }
+    });
+
+    try {
+        dbConnection.query('SELECT * FROM domotica.PowerUsage WHERE date > CURDATE();', function (err, rows, fields){
+            if (err) throw err;
+            var response = [];
+
+            rows.forEach(function (row) {
+                var parts = row.date.toString().match(/(\d{2})\/(\d{2})\/(\d{4}) (\d{2}):(\d{2})/);
+                var datapoint = [Date.UTC(+parts[3], parts[2]-1, +parts[1], +parts[4], +parts[5]), parseInt(row.kwatts.toString())*2];
                 response.push(datapoint);
             });
 
