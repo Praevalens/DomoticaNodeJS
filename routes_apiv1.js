@@ -58,6 +58,58 @@ router.post('/countkw', function (req, res) {
 
 });
 
+router.post('/sensorreadings/push', function (req, res) {
+    var sensor1 =req.body.sensor1 || '';
+    var sensor2 =req.body.sensor2 || '';
+    var sensor3 =req.body.sensor3 || '';
+
+
+    if (sensor1 == '' || sensor2 == '' || sensor3 == '') {
+        console.log("Incompatible data");
+        res.status(500);
+        res.json({
+            "status": 500,
+            "message": "Incompatible data"
+        });
+    } else {
+        dbConnection = sql.createConnection({
+            host     : settings.dbHost,
+            user     : settings.dbUser,
+            password : settings.dbPassword,
+            dateStrings: 'date'
+        });
+
+        dbConnection.connect(function(err){
+            if(!err) {
+                //console.log("Database is connected ...");
+            } else {
+                console.log("Error connecting database ...");
+            }
+        });
+
+        try {
+            dbConnection.query('INSERT INTO domotica.sensorreadings(sensor1, sensor2, sensor3) VALUES ("'+ sensor1 +'", "'+ sensor2 +'", "'+ sensor3 +'")', function (err, result){});
+
+            res.status(200);
+            res.json({
+                "status": 200,
+                "message": "Success!"
+            });
+
+        } catch (err){
+            console.log("Server error");
+            res.status(500);
+            res.json({
+                "status": 500,
+                "message": "Server error"
+            });
+            throw err;
+        }
+        dbConnection.end();
+    }
+
+});
+
 router.get('/powerusage', function (req, res) {
 
     dbConnection = sql.createConnection({
