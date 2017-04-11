@@ -265,8 +265,8 @@ router.get('/powerusage/today/web', function (req, res) {
             var response = [];
 
             rows.forEach(function (row) {
-                var parts = row.date.toString().match(/(\d{2})\/(\d{2})\/(\d{4}) (\d{2}):(\d{2})/);
-                var datapoint = [Date.UTC(+parts[3], parts[2]-1, +parts[1], +parts[4], +parts[5]), parseInt(row.kwatts.toString())*2];
+                var parts = row.date.toString().match(/(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})/);
+                var datapoint = [Date.UTC(+parts[1], parts[2]-1, +parts[3], +parts[4], +parts[5], +parts[6]), parseInt(row.kwatts.toString())*2];
                 response.push(datapoint);
             });
 
