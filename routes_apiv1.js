@@ -136,7 +136,8 @@ router.get('/sensorreadings', function (req, res) {
             res.status(200);
             res.json({
                 "status": 200,
-                "kWh": kWhCount
+                "light": lightintensity,
+                "temperature": temperature
             });
         });
 
